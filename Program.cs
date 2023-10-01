@@ -5,6 +5,13 @@ using System.Threading.Tasks;
 
 class Program
 {
+
+    static readonly int NumberOfSensors = 51; 
+
+    // If you want to adjust default values in sensors change true/false to apply changes 
+    static readonly bool IsThereSensorsToBeAdjusted = false;
+
+
     static async Task Main(string[] args)
     {
         if (args.Length < 1)
@@ -16,10 +23,12 @@ class Program
             return;
         }
 
-        // If you want to adjust default values in sensors change true/false to apply changes 
-        bool isThereSensorsToBeAdjusted = true;
+        List<Sensor> sensors = InitializeSensors();
 
-        List<Sensor> sensors = InitializeSensors(isThereSensorsToBeAdjusted);
+        if (IsThereSensorsToBeAdjusted)
+        {
+            sensors = AdjustTiltedSensors(sensors);
+        }
 
         string controlPattern = args[0];
 
@@ -37,12 +46,12 @@ class Program
         }
     }
 
-    static List<Sensor> InitializeSensors(bool isThereSensorsToBeAdjusted)
+    static List<Sensor> InitializeSensors()
     {
         List<Sensor> sensors = new List<Sensor>();
 
         // Initialize 20 sensors in alternating types
-        for (int i = 1; i <= 20; i++)
+        for (int i = 1; i <= NumberOfSensors; i++)
         {   
             int initialValue = 0;
             string type = "";
@@ -60,11 +69,6 @@ class Program
             }
 
             sensors.Add(new Sensor(i, type, initialValue));
-        }
-
-        if (isThereSensorsToBeAdjusted)
-        {
-            sensors = AdjustTiltedSensors(sensors);
         }
 
         return sensors;
@@ -99,7 +103,6 @@ class Program
 
         return sensors;
     }
-
     
     static async Task RunSequentialControlPattern(List<Sensor> sensors)
     {

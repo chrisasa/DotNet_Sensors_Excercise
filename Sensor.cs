@@ -34,7 +34,7 @@ class Sensor
 
             this.SensorValue = SensorRecordsDataDefaultValue - InitialValue;
             
-            await Task.Delay(1000); // Simulate recording for 1 second
+            // await Task.Delay(1000); // Simulate recording for 1 second
         }
     }
 
