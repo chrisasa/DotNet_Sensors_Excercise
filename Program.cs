@@ -10,7 +10,8 @@ class Program
         if (args.Length < 1)
         {
             // Console.WriteLine("Variables are missing, please use the following pattern for usage: controller_program.exe <control pattern>");
-            Console.Error.WriteLine("Variables are missing, please use the following pattern for usage: controller_program.exe <control pattern>[\"sequence\",\"type\"]");
+            Console.Error.WriteLine("Variables are missing, please use the following pattern" +
+                                    "for usage: controller_program.exe <control pattern>[\"sequence\",\"type\"]");
             
             return;
         }
@@ -43,6 +44,7 @@ class Program
         // Initialize 20 sensors in alternating types
         for (int i = 1; i <= 20; i++)
         {   
+            int initialValue = 0;
             string type = "";
 
             if ( i % 3 == 1 )
@@ -57,11 +59,6 @@ class Program
                 type = "z-axis";
             }
 
-            //string type = i % 3 == 1 ? "x-axis" : (i % 3 == 2 ? "y-axis" : "z-axis");
-            
-            int initialValue = 0;
-            // int initialValue = i > 15 ? 3 : 0; // Offset tilted sensors
-            
             sensors.Add(new Sensor(i, type, initialValue));
         }
 
@@ -77,18 +74,21 @@ class Program
     static List<Sensor> AdjustTiltedSensors(List<Sensor> sensors)
     {
         int sensor_offset = 3;
+
          // Get the x-axis sensors from the sensor list
         var x_sensors = sensors.Where(sn => sn.Type == "x-axis").ToList();
         
         // Get the x-axis sensors that are tilt (last 5 in this case)
         var x_sensors_tilted = x_sensors.TakeLast(5).ToList();
         
-        foreach(Sensor x_sn in x_sensors_tilted){
-            // Console.WriteLine(sn.Position);
-            // Console.WriteLine(sn.Type);
-            // Console.WriteLine(sn.InitialValue);
+        // Find and replace the values in the sensors list
+        foreach(Sensor x_sn in x_sensors_tilted)
+        {
+            // We are treating Position value as unique Id and we are matching entries based on it
             var tmp_sensor = sensors.FirstOrDefault(sn => sn.Position == x_sn.Position);
             
+            // Null check or enclose in try-catch. In this case may not benecessary as we are getting 
+            // the values from the same list so for sure they should exist
             if (tmp_sensor != null ) 
             {   
                 tmp_sensor.InitialValue = sensor_offset; 
