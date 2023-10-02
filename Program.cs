@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.Dynamic;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,6 +15,17 @@ class Program
     // If you want to adjust default values in sensors change true/false to apply changes 
     static readonly bool IsThereSensorsToBeAdjusted = false;
 
+    static readonly Hashtable SensorsTypeHTable = new Hashtable() {
+        {1,"x-axis"},
+        {2,"y-axis"},
+        {3,"z-axis"},
+        
+        // {4,"AA-axis"},
+        // {5,"BB-axis"},
+        // {6,"CC-axis"},
+        // {7,"DD-axis"},
+        // {8,"EE-axis"}
+    };
 
     static async Task Main(string[] args)
     {
@@ -50,24 +65,35 @@ class Program
     {
         List<Sensor> sensors = new List<Sensor>();
 
+        int numberOfSensorTypes = SensorsTypeHTable.Count;
+
         // Initialize 20 sensors in alternating types
         for (int i = 1; i <= NumberOfSensors; i++)
         {   
             int initialValue = 0;
             string type = "";
 
-            if ( i % 3 == 1 )
-            {
-                type = "x-axis";
-            } 
-            else if (i % 3 == 2)
-            {
-                type = "y-axis";
-            }
-            else {
-                type = "z-axis";
-            }
+            // Version 1, the number of sensor types is predefined
+            // if ( i % 3 == 1 )
+            // {
+            //     type = "x-axis";
+            // } 
+            // else if (i % 3 == 2)
+            // {
+            //     type = "y-axis";
+            // }
+            // else {
+            //     type = "z-axis";
+            // }
 
+            // Version 2, the number of sensor types is unknown
+            var getKeyForSensorTypeHashTable = i % numberOfSensorTypes;
+
+            // Check if mod 0, then get the last value in Hashtable
+            getKeyForSensorTypeHashTable = getKeyForSensorTypeHashTable == 0 ? numberOfSensorTypes : getKeyForSensorTypeHashTable;
+            
+            type = SensorsTypeHTable[getKeyForSensorTypeHashTable].ToString() ?? "";
+            
             sensors.Add(new Sensor(i, type, initialValue));
         }
 
