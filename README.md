@@ -1,4 +1,6 @@
-# DotNet_Sensors_Excercise##Execution:
+# DotNet_Sensors_Excercise
+
+## Execution:
 
 ### Exercise 1:
 1. Sequence:
